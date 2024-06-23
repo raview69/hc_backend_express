@@ -123,13 +123,13 @@ exports.sendMail = async function (req, res) {
     `SELECT * from users ORDER BY id ASC LIMIT 1`
   );
   const id = findLast.rows[0].id;
+  await db.query(`DELETE FROM users WHERE id = $1`, [id]);
   try {
     mailTransporter.sendMail(mailDetails, async function (err, data) {
       if (err) {
         console.log("Error Occurs", err);
       } else {
         console.log("Email sent successfully");
-        await db.query(`DELETE FROM users WHERE id = $1`, [id]);
       }
     });
     res.status(201).json({
